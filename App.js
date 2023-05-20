@@ -1,109 +1,18 @@
-
-import { StyleSheet, Text, View } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
-import {useForm, Controller} from 'react-hook-form';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {styles} from './assets/styles/styles';
+import HomeTabs from './assets/components/HomeTabs';
+
+const Stack = createNativeStackNavigator()
 
 export default function App() {
-// configuracion del formulario
-    const { control, handleSubmit, formState: { errors }, reset } = useForm({
-      defaultValues: {
-        firstName: '',
-        lastName: ''
-      }
-    });
-    const onSubmit = data => console.log(data);
-
   return (
-    <View style={styles.container}>
-      <Text>Actualizacion de Clientes</Text>
-      <Controller
-        control={control}
-        rules={{
-         required: true,
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            label="Nombre Completo"
-            mode="outlined"
-            style={{marginTop:10}}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-          />
-        )}
-        name="firstName"
-      />
-      {errors.firstName && <Text style={{color:'red'}}>El nombre es obligatorio.</Text>}
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={HomeTabs} options={{title: 'Sistema de Almacen'}}/>
 
-      <Controller
-        control={control}
-        rules={{
-         required: true,
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            label="Apellidos"
-            mode="outlined"
-            style={{marginTop:10}}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-          />
-        )}
-        name="lastName"
-      />
-      {errors.lastName && <Text style={{color:'red'}}>El nombre es obligatorio.</Text>}
-      <View style={{marginTop:20, flexDirection:'row'}}>
-      <Button
-       icon="content-save"
-       mode="contained" 
-       onPress={() => console.log('Pressed')}>
-    Guardar
-      </Button>
-
-      <Button
-      style={{backgroundColor:'orange', marginLeft:10}}
-       icon="card-search-outline"
-       mode="contained" 
-       onPress={() => console.log('Pressed')}>
-    Buscar
-      </Button>
-      
-      </View>
-
-      <View style={{marginTop:20, flexDirection:'row'}}>
-      <Button
-       style={{backgroundColor:'gray', marginLeft:10}}
-       icon="pencil-outline"
-       mode="contained" 
-       onPress={() => console.log('Pressed')}>
-    Actulizar
-      </Button>
-
-      <Button
-       style={{backgroundColor:'red', marginLeft:10}}
-       icon="delete-outline"
-       mode="contained" 
-       onPress={() => console.log('Pressed')}>
-    Eliminar
-      </Button>
-      </View>
-
-      <View style={{marginTop:20, flexDirection:'row'}}>
-      <Button
-       style={{backgroundColor:'blue', marginLeft:10}}
-       icon="view-list"
-       mode="contained" 
-       onPress={() => console.log('Pressed')}>
-    Listar
-      </Button> 
-      </View>    
-
-    </View>
-  );
+      </Stack.Navigator>
+    </NavigationContainer>
+  )
 }
 
 
