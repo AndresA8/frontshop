@@ -14,7 +14,7 @@ const [isError, setIserror] = useState(false);
 const [message, setMessage] = useState('');
 const [idSearch, setIdsearch] = useState('')
 
-    const { control, handleSubmit, formState: { errors }, reset } = useForm({
+    const { control, handleSubmit, formState: { errors }, reset, setValue } = useForm({
       defaultValues: {
         firstName: '',
         lastName: ''
@@ -22,7 +22,7 @@ const [idSearch, setIdsearch] = useState('')
     });
     const onSave =  async data =>{
       let nombre = data.firstName;
-      let apellidos = data.lastName
+      let apellidos = data.lastName;
       const response =await axios.post(`http://127.0.0.1:3000/api/clientes`,{
         nombre,
         apellidos,
@@ -35,7 +35,45 @@ const [idSearch, setIdsearch] = useState('')
       reset();
       //console.log(data)
     };
+      const onSearch = async() => {
+        const respose = await axios.get(`http://127.0.0.1:3000/api/clientes/${idSearch}`);
+        if(!respose.data.error){// encuentra el idsearch
+          setValue("firstName", respose.data.nombre);
+          setValue("lastName", respose.data.apellidos);
+          setMessage(' ');
+          setIserror(false);
+        }
+        else{
+          setIserror(true);
+          setMessage('El id del cliente no existe. Intenta con otro...')
+        }
+      };
 
+      const onUpdate = async (data) => {
+        const respose = await axios.put(`http://127.0.0.1:3000/api/clientes/${idSearch}`,{
+        nombre:data.firstName,
+        apellidos:data.lastName,
+        });
+        setIserror(false);
+        setMessage("Cliente actualizado correctamente...");
+        setTimeout(() =>{
+        setMessage("")
+      },2000)
+      reset();
+      console.log(data)
+    };
+
+    const onDelete = async (data) => {
+      if(confirm(`Esta seguro de eliminar el cliente ${data.firstName} ${data.lastName}?`)){
+        const respose =await axios.delete(`http://127.0.0.1:3000/api/clientes/${idSearch}`)
+        setIserror(false)
+        setMessage("Cliente eliminado correctamente");
+          setTimeout(() => {
+            setMessage("")
+            reset();
+          }, 2000);
+      }
+    }
 
   return (
     <View style={styles.container}>
@@ -97,7 +135,7 @@ const [idSearch, setIdsearch] = useState('')
       style={{backgroundColor:'orange', marginLeft:10}}
        icon="card-search-outline"
        mode="contained" 
-       //onPress={}
+       onPress={onSearch}
        >
     Buscar
       </Button>
@@ -109,7 +147,7 @@ const [idSearch, setIdsearch] = useState('')
        style={{backgroundColor:'gray', marginLeft:10}}
        icon="pencil-outline"
        mode="contained" 
-       onPress={() => console.log('Pressed')}>
+       onPress={handleSubmit(onUpdate)}>
     Actulizar
       </Button>
 
@@ -117,7 +155,7 @@ const [idSearch, setIdsearch] = useState('')
        style={{backgroundColor:'red', marginLeft:10}}
        icon="delete-outline"
        mode="contained" 
-       onPress={() => console.log('Pressed')}>
+       onPress={handleSubmit(onDelete)}>
     Eliminar
       </Button>
       </View>   
